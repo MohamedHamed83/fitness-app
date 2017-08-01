@@ -1,13 +1,12 @@
 var React = require("react");
 var ReactDOM = require('react-dom');
 
-
-class Contact extends React.Component{
+class App extends React.Component{
     render(){
         return(<div>
-            Contact us
+            <p>react 7</p>
         </div>)
     }
 }
-ReactDOM.render(<Contact ></Contact>,
+ReactDOM.render(<App></App>,
 document.getElementById('react-container'));

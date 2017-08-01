@@ -1,6 +1,5 @@
 const webpack = require("webpack");
 const { resolve, join } = require("path");
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
     //where the application will start
@@ -30,10 +29,10 @@ module.exports = {
     //cheap-module-source-map: original code not the transpiled  "source map smaller and correct file name and line number provided"
     //eval-source-map: 
     // source-map: produces separate source map file
-    devtool: 'cheap-module-source-map',
+    devtool: 'source-map',
     // webpack dev server configration
     devServer: {
-        historyApiFallback: true,
+        inline: true,
         hot: true, // Live-reload
         //if the inline is false webpack-dev-server will show the application in ifram
         inline: true,
@@ -67,26 +66,13 @@ module.exports = {
         ]
     },
     plugins: [
-        // Enables Hot Modules Replacement " HMR is a feature to inject updated modules into the active runtime like LiveReload for every module"
-        new webpack.HotModuleReplacementPlugin(),
-
         new webpack.optimize.CommonsChunkPlugin({
             name: "vendor",
             filename: "vendor.bundle.js"
         }),
-        //creation of HTML files to serve your webpack bundles
-        new HtmlWebpackPlugin({
-            chunkSortMode: 'dependency',
-            template: './index.html',
-            minify: {
-                removeComments: true,
-                collapseWhitespace: true
-            }
-        }),
-        new webpack.ProvidePlugin({
-            jQuery: 'jquery',
-            $: 'jquery',
-            jquery: 'jquery'
+        // Minify the bundle
+        new webpack.optimize.UglifyJsPlugin({
+            mininize:true
         })
     ]
 }

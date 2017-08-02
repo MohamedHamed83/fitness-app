@@ -1,4 +1,7 @@
 const webpack = require("webpack");
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ProgressPlugin = require('webpack/lib/ProgressPlugin');
 const { resolve, join } = require("path");
 
 module.exports = {
@@ -14,10 +17,10 @@ module.exports = {
     },
     //where the bundle files will go
     output: {
-        // the build folder
-        path: resolve(__dirname, 'build'), // Path of output file
-        // the bundle file's
-        filename: '[name].bundle.js',
+        path: resolve(__dirname, './build'),// Path of output file
+        publicPath: './',// the bundle file's
+        filename: 'js/[name].[hash].js',
+        chunkFilename: 'js/[name].[hash].js'
         //tilling webpacl dev server where to serve bundle files from
         // publicPath: '/build/'
     },
@@ -32,15 +35,20 @@ module.exports = {
     devtool: 'source-map',
     // webpack dev server configration
     devServer: {
-        inline: true,
-        hot: true, // Live-reload
-        //if the inline is false webpack-dev-server will show the application in ifram
-        inline: true,
+        stats: {
+            cached: true,
+            cachedAssets: true,
+            chunks: true,
+            chunkModules: false,
+            colors: true,
+            hash: false,
+            reasons: true,
+            timings: true,
+            version: false
+        },
+        historyApiFallback: true,
         // //where the files will come from
         contentBase: join(__dirname, "build"),
-        // on which port you are going to run the webpack-dev-server,
-        port: 3000,
-        host: 'localhost', // Change to '0.0.0.0' for external facing server
     },
     module: {
         rules: [
@@ -60,19 +68,56 @@ module.exports = {
                 loader: 'style-loader!css-loader!sass-loader'
             },
             {
-                test: /\.(png|jpg)$/,
-                loader: 'url-loader?Limit=10000'
+                test: /\.(png|jpg|gif)$/,
+                loader: 'url-loader',
+                options: {
+                    limit: 8192,
+                    name: 'images/[name].[ext]'
+                }
+
+            },
+            {
+                test: /\.html$/,
+                loader: 'raw-loader'
             }
         ]
+
     },
     plugins: [
+        // //deleting the build folder before a fresh build
+        new CleanWebpackPlugin(['build']),
+        new webpack.HotModuleReplacementPlugin(),
+        new webpack.DefinePlugin({
+            "process.env": {
+                NODE_ENV: JSON.stringify("production")
+            }
+        }),
         new webpack.optimize.CommonsChunkPlugin({
             name: "vendor",
-            filename: "vendor.bundle.js"
+            filename: "js/vendor.[hash].bundle.js"
         }),
+        new ProgressPlugin(),
+        new HtmlWebpackPlugin({
+            path: './build',
+            template: './index.html',
+            minify: {
+                removeComments: true,
+                collapseWhitespace: true
+            }
+        }),
+        new webpack.NoErrorsPlugin(),
         // Minify the bundle
         new webpack.optimize.UglifyJsPlugin({
-            mininize:true
+            comments: false,
+            compress: {
+                dead_code: true,
+                screw_ie8: true,
+                unused: true,
+                warnings: false
+            },
+            mangle: {
+                screw_ie8: true
+            }
         })
     ]
 }

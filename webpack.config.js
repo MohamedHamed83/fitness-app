@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ROOT_PATH = resolve(__dirname);
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-
+const localPath = 'http://localhost:3000/';
 module.exports = {
     // watch: true,
     // cache: true,
@@ -24,7 +24,7 @@ module.exports = {
         // the build folder
         path: join(__dirname, "build"),
         //tilling webpack dev server where to serve bundle files from "will be injected in the html"
-        publicPath: "./",
+        publicPath: localPath,
         // the bundle file's inclunding hash for long term caching "name of the entry files"
         filename: "[name].[chunkhash].bundle.js",
         //the name of non-entry chunk files
@@ -41,13 +41,23 @@ module.exports = {
     devtool: 'cheap-module-source-map',
     // webpack dev server configration
     devServer: {
+        stats: {
+            cached: true,
+            cachedAssets: true,
+            chunks: true,
+            chunkModules: false,
+            colors: true,
+            hash: false,
+            reasons: true,
+            timings: true,
+            version: false
+        },
         historyApiFallback: true,
         noInfo: true, //  --no-info option
-        hot: true, // Live-reload
         //if the inline is false webpack-dev-server will show the application in ifram
         inline: true,
         // //where the files will come from
-        contentBase: join(ROOT_PATH, "build"),
+        contentBase: ROOT_PATH,
         // on which port you are going to run the webpack-dev-server,
         port: 3000,
         host: 'localhost', // Change to '0.0.0.0' for external facing server
@@ -60,10 +70,27 @@ module.exports = {
                 // include:<file or directory>
                 //don't run webpack on these files
                 exclude: /(note_modules)/,
-                loader: "babel-loader",
-                query: {
-                    presets: ["es2015", "react"]
-                }
+                loaders: [
+                    {
+                        loader: "babel-loader",
+                        query: {
+                            presets: ["es2015", "react"]
+                        }
+                    },
+                    {
+                        loader: 'eslint-loader',
+                        options: {
+                            emitError: false,
+                            fix: true,                            // // default value
+                            formatter: require("eslint/lib/formatters/stylish"),
+
+
+                            // community formatter
+                            formatter: require("eslint-friendly-formatter"),
+                        }
+
+                    }
+                ]
             },
             {
                 test: /\.scss$/,
@@ -73,8 +100,13 @@ module.exports = {
                 })
             },
             {
-                test: /\.(png|jpg)$/,
-                use: 'url-loader?Limit=10000'
+                test: /\.(png|jpg|gif)$/,
+                loader: 'url-loader',
+                options: {
+                    limit: 8192,
+                    name: 'images/[name].[ext]'
+                }
+
             }
         ]
     },

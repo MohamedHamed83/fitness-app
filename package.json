@@ -8,7 +8,7 @@
     "prebuild": "rimraf build",
     "prebuild:dev": "rimraf build",
     "build": "webpack -p",
-    "dev": "webpack-dev-server --colors"
+    "dev": "webpack-dev-server --colors --open "
   },
   "author": "",
   "license": "ISC",
@@ -22,7 +22,9 @@
     "babel-loader": "^7.1.1",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-react": "^6.24.1",
+    "copy-webpack-plugin": "^4.0.1",
     "css-loader": "^0.28.4",
+    "extract-text-webpack-plugin": "^3.0.0",
     "file-loader": "^0.11.2",
     "html-webpack-plugin": "^2.30.1",
     "node-sass": "^4.5.3",

@@ -1,8 +1,14 @@
 const webpack = require("webpack");
 const { resolve, join } = require("path");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const ROOT_PATH = resolve(__dirname);
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
+    // watch: true,
+    // cache: true,
+
     //where the application will start
     entry: {
         // only- means to only hot reload for successful updates
@@ -16,11 +22,13 @@ module.exports = {
     //where the bundle files will go
     output: {
         // the build folder
-        path: resolve(__dirname, 'build'), // Path of output file
-        // the bundle file's
-        filename: '[name].bundle.js',
-        //tilling webpacl dev server where to serve bundle files from
-        // publicPath: '/build/'
+        path: join(__dirname, "build"),
+        //tilling webpack dev server where to serve bundle files from "will be injected in the html"
+        publicPath: "./",
+        // the bundle file's inclunding hash for long term caching "name of the entry files"
+        filename: "[name].[chunkhash].bundle.js",
+        //the name of non-entry chunk files
+        chunkFilename: "[name].[chunkhash].bundle.js"
     },
     //devtools options:
     //eval: will have the generated code for the bundle "No sourcemap no devtools faster for build and rebuild"
@@ -34,11 +42,12 @@ module.exports = {
     // webpack dev server configration
     devServer: {
         historyApiFallback: true,
+        noInfo: true, //  --no-info option
         hot: true, // Live-reload
         //if the inline is false webpack-dev-server will show the application in ifram
         inline: true,
         // //where the files will come from
-        contentBase: join(__dirname, "build"),
+        contentBase: join(ROOT_PATH, "build"),
         // on which port you are going to run the webpack-dev-server,
         port: 3000,
         host: 'localhost', // Change to '0.0.0.0' for external facing server
@@ -58,11 +67,14 @@ module.exports = {
             },
             {
                 test: /\.scss$/,
-                loader: 'style-loader!css-loader!sass-loader'
+                use: ExtractTextPlugin.extract({
+                    fallback: 'style-loader',
+                    use: ['css-loader', 'sass-loader']
+                })
             },
             {
                 test: /\.(png|jpg)$/,
-                loader: 'url-loader?Limit=10000'
+                use: 'url-loader?Limit=10000'
             }
         ]
     },
@@ -70,23 +82,43 @@ module.exports = {
         // Enables Hot Modules Replacement " HMR is a feature to inject updated modules into the active runtime like LiveReload for every module"
         new webpack.HotModuleReplacementPlugin(),
 
+        new webpack.optimize.OccurrenceOrderPlugin(),
+
+        new ExtractTextPlugin({
+            filename: 'css/[name].css',
+            allChunks: true
+        }),
+
+        //exclude all the common code from modules and bundle them in on file
         new webpack.optimize.CommonsChunkPlugin({
             name: "vendor",
-            filename: "vendor.bundle.js"
+            filename: "vendor.[hash].bundle.js"
         }),
-        //creation of HTML files to serve your webpack bundles
+        //creation of HTML files to serve the webpack bundles
         new HtmlWebpackPlugin({
-            chunkSortMode: 'dependency',
+            path: './build',
             template: './index.html',
             minify: {
                 removeComments: true,
                 collapseWhitespace: true
             }
         }),
+        // new CopyWebpackPlugin([
+        //     {
+        //         from: './index.html',
+        //         to: '../'
+        //     }
+        // ]),
         new webpack.ProvidePlugin({
             jQuery: 'jquery',
             $: 'jquery',
             jquery: 'jquery'
         })
+        // // merge multiple entry files into on bundle
+        //new CommonsChunkPlugin("admin-commons.js", ["entryfile1", "entryfile2"]),
+        // //Limit the maximum chunk count with --optimize-max-chunks 15 
+        // new webpack.optimize.LimitChunkCountPlugin({maxChunks: 15})
+        // //Limit the minimum chunk size with --optimize-min-chunk-size 10000 
+        //new webpack.optimize.MinChunkSizePlugin({minChunkSize: 10000})
     ]
 }

@@ -1,8 +1,8 @@
 $black: #000000;
 $white: #ffffff;
 div {
-    background: url("./test-image.jpg");
+    background-color: $black;
+    color:$white;
     background-position: 100%;
-    background-repeat: no-repeat; // background-color: $black;
-    // color: $white;
+    background-repeat: no-repeat;
 }

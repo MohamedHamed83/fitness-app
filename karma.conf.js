@@ -3,18 +3,15 @@ const { resolve, join } = require('path');
 
 module.exports = function karmaConfig(config) {
     config.set({
-        frameworks: [
-            // Reference: https://github.com/karma-runner/karma-jasmine
-            // Set framework to jasmine
-            'jasmine'
-        ],
+        frameworks: ['mocha', 'sinon', 'chai'],
         plugins: [
+            require('karma-mocha'),
+            require('karma-chai'),
+            require('karma-sinon'),
             require('karma-phantomjs-launcher'),
             require('karma-chrome-launcher'),
             require('karma-webpack'),
-            require('karma-jasmine'),
             require('karma-coverage'),
-            require('karma-mocha'),
             require('karma-sourcemap-loader'),
             require('karma-mocha-reporter'),
             require('istanbul-instrumenter-loader'),
@@ -36,8 +33,8 @@ module.exports = function karmaConfig(config) {
         },
 
         browsers: [
-            // 'PhantomJS'
-            'Chrome'
+            'PhantomJS'
+            // 'Chrome'
         ],
 
         singleRun: true,
@@ -56,7 +53,7 @@ module.exports = function karmaConfig(config) {
             ]
         },
 
-        webpack:require('./webpack.test.config'),
+        webpack: require('./webpack.test.config'),
         // ,
 
         // Hide webpack build information from output

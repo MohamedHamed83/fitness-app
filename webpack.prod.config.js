@@ -1,8 +1,8 @@
-const webpack = require("webpack");
+const webpack = require('webpack');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ProgressPlugin = require('webpack/lib/ProgressPlugin');
-const { resolve, join } = require("path");
+const { resolve, join } = require('path');
 
 module.exports = {
     //where the application will start
@@ -12,7 +12,7 @@ module.exports = {
             'webpack/hot/only-dev-server',
             './src/app.js',
         ],
-        vendor: ["react", "react-dom"]
+        vendor: ['react', 'react-dom']
 
     },
     //where the bundle files will go
@@ -48,7 +48,7 @@ module.exports = {
         },
         historyApiFallback: true,
         // //where the files will come from
-        contentBase: join(__dirname, "build"),
+        contentBase: join(__dirname, 'build'),
     },
     module: {
         rules: [
@@ -58,9 +58,9 @@ module.exports = {
                 // include:<file or directory>
                 //don't run webpack on these files
                 exclude: /(note_modules)/,
-                loader: "babel-loader",
+                loader: 'babel-loader',
                 query: {
-                    presets: ["es2015", "react"]
+                    presets: ['es2015', 'react']
                 }
             },
             {
@@ -88,13 +88,13 @@ module.exports = {
         new CleanWebpackPlugin(['build']),
         new webpack.HotModuleReplacementPlugin(),
         new webpack.DefinePlugin({
-            "process.env": {
-                NODE_ENV: JSON.stringify("production")
+            'process.env': {
+                NODE_ENV: JSON.stringify('production')
             }
         }),
         new webpack.optimize.CommonsChunkPlugin({
-            name: "vendor",
-            filename: "js/vendor.[hash].bundle.js"
+            name: 'vendor',
+            filename: 'js/vendor.[hash].bundle.js'
         }),
         new ProgressPlugin(),
         new HtmlWebpackPlugin({
@@ -120,4 +120,4 @@ module.exports = {
             }
         })
     ]
-}
+};

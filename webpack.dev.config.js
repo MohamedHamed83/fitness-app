@@ -1,5 +1,5 @@
-const webpack = require("webpack");
-const { resolve, join } = require("path");
+const webpack = require('webpack');
+const { resolve, join } = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ROOT_PATH = resolve(__dirname);
@@ -16,19 +16,19 @@ module.exports = {
             'webpack/hot/only-dev-server',
             './src/app.js',
         ],
-        vendor: ["react", "react-dom"]
+        vendor: ['react', 'react-dom']
 
     },
     //where the bundle files will go
     output: {
         // the build folder
-        path: join(__dirname, "build"),
+        path: join(__dirname, 'build'),
         //tilling webpack dev server where to serve bundle files from "will be injected in the html"
         publicPath: localPath,
         // the bundle file's inclunding hash for long term caching "name of the entry files"
-        filename: "[name].[chunkhash].bundle.js",
+        filename: '[name].[chunkhash].bundle.js',
         //the name of non-entry chunk files
-        chunkFilename: "[name].[chunkhash].bundle.js"
+        chunkFilename: '[name].[chunkhash].bundle.js'
     },
     //devtools options:
     //eval: will have the generated code for the bundle "No sourcemap no devtools faster for build and rebuild"
@@ -72,9 +72,9 @@ module.exports = {
                 exclude: /(note_modules)/,
                 loaders: [
                     {
-                        loader: "babel-loader",
+                        loader: 'babel-loader',
                         query: {
-                            presets: ["es2015", "react"]
+                            presets: ['es2015', 'react']
                         }
                     },
                     {
@@ -82,11 +82,11 @@ module.exports = {
                         options: {
                             emitError: false,
                             fix: true,                            // // default value
-                            formatter: require("eslint/lib/formatters/stylish"),
+                            formatter: require('eslint/lib/formatters/stylish'),
 
 
                             // community formatter
-                            formatter: require("eslint-friendly-formatter"),
+                            formatter: require('eslint-friendly-formatter'),
                         }
 
                     }
@@ -123,8 +123,8 @@ module.exports = {
 
         //exclude all the common code from modules and bundle them in on file
         new webpack.optimize.CommonsChunkPlugin({
-            name: "vendor",
-            filename: "vendor.[hash].bundle.js"
+            name: 'vendor',
+            filename: 'vendor.[hash].bundle.js'
         }),
         //creation of HTML files to serve the webpack bundles
         new HtmlWebpackPlugin({
@@ -153,4 +153,4 @@ module.exports = {
         // //Limit the minimum chunk size with --optimize-min-chunk-size 10000 
         //new webpack.optimize.MinChunkSizePlugin({minChunkSize: 10000})
     ]
-}
+};

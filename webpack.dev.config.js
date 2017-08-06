@@ -41,6 +41,23 @@ module.exports = {
     devtool: 'cheap-module-source-map',
     // webpack dev server configration
     devServer: {
+        // //We want to proxy all urls that start with /api to http://jsonplaceholder.typicode.com/,
+        // // but remove /api from the url. 
+        // //So http://localhost:8080/api/users should do a request to http://jsonplaceholder.typicode.com/users.
+        // proxy: {
+        // 	'/api': {
+        // 		target: 'http://jsonplaceholder.typicode.com/',
+        // 		changeOrigin: true,
+        // 		pathRewrite: {
+        // 			'^/api': ''
+        // 		},
+        // 		bypass: function(req) {
+        // 			if(req.url === '/api/nope') {
+        // 				return '/bypass.html';
+        // 			}
+        // 		}
+        // 	}
+        // },
         stats: {
             cached: true,
             cachedAssets: true,

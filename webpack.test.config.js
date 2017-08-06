@@ -1,8 +1,12 @@
 const webpack = require('webpack');
 const { resolve, join } = require('path');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 module.exports = {
     devtool: 'inline-source-map',
+    resolve: {
+        extensions: ['.js']
+    },
     module: {
         rules: [{
             test: /\.js$/,
@@ -11,13 +15,17 @@ module.exports = {
         }, {
             test: /\.css$/,
             loader: 'null-loader'
+        }, {
+            test: /\.scss$/,
+            loader: 'null-loader'
         },
         {
             test: /\.(png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot)$/,
             loader: 'null-loader'
         }, {
             test: /\.html$/,
-            loader: 'raw-loader'
+            loader: 'html-loader'
+
         },
         {
             test: /\.json$/,
@@ -25,24 +33,16 @@ module.exports = {
             exclude: [join(__dirname, 'src/index.html')]
         },
         {
-            enforce: 'pre',
             test: /\.js$/,
-            loader: 'source-map-loader',
-            exclude: [
-                // these packages have problems with their sourcemaps
-                // join(__dirname,'node_modules/rxjs'),
-            ]
-        },
-        {
-            enforce: 'post',
-            test: /\.(js)$/,
+            exclude: /(node_modules|app\\spec)/,
             loader: 'istanbul-instrumenter-loader',
-            include: resolve(__dirname, './src'),
-            exclude: [/\.spec\.js$/, /\.e2e\.js$/, /node_modules/]
+            enforce: 'post'
         }
         ]
     },
     plugins: [
+        // //deleting the coverage folder before a fresh coverage
+        new CleanWebpackPlugin(['coverage']),
         new webpack.ProvidePlugin({
             $: 'jquery',
             jQuery: 'jquery',

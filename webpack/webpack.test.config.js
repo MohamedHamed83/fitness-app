@@ -61,7 +61,7 @@ module.exports = {
         })
     ],
     devServer: {
-        contentBase: './src',
+        contentBase: '../src',
         stats: 'minimal'
     }
 };

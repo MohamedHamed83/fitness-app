@@ -68,7 +68,7 @@ module.exports = function karmaConfig(config) {
         // Webpack don't spam the console when running in karma!
         webpackMiddleware: { stats: 'errors-only' },
 
-        webpack: require('./webpack.test.config'),
+        webpack: require('./webpack/webpack.test.config'),
         // ,
 
         // Hide webpack build information from output

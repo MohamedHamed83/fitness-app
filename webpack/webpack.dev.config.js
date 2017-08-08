@@ -14,7 +14,7 @@ module.exports = {
         // only- means to only hot reload for successful updates
         main: [
             'webpack/hot/only-dev-server',
-            './src/app.js',
+            '../src/app.js',
         ],
         vendor: ['react', 'react-dom']
 
@@ -32,17 +32,17 @@ module.exports = {
     },
     //devtools options:
     //eval: will have the generated code for the bundle "No sourcemap no devtools faster for build and rebuild"
-    //cheap-eval-source-map: remove the webpack bundle code 
-    //cheap-source-map: 
+    //cheap-eval-source-map: remove the webpack bundle code
+    //cheap-source-map:
     //cheap-module-eval-source-map: Similar to cheap-eval-source-map, however in this case this case loaders are able to process the mapping for better results.
     //cheap-module-source-map: original code not the transpiled  "source map smaller and correct file name and line number provided"
-    //eval-source-map: 
+    //eval-source-map:
     // source-map: produces separate source map file
     devtool: 'cheap-module-source-map',
     // webpack dev server configration
     devServer: {
         // //We want to proxy all urls that start with /api to http://jsonplaceholder.typicode.com/,
-        // // but remove /api from the url. 
+        // // but remove /api from the url.
         // //So http://localhost:8080/api/users should do a request to http://jsonplaceholder.typicode.com/users.
         // proxy: {
         // 	'/api': {
@@ -165,9 +165,9 @@ module.exports = {
         })
         // // merge multiple entry files into on bundle
         //new CommonsChunkPlugin("admin-commons.js", ["entryfile1", "entryfile2"]),
-        // //Limit the maximum chunk count with --optimize-max-chunks 15 
+        // //Limit the maximum chunk count with --optimize-max-chunks 15
         // new webpack.optimize.LimitChunkCountPlugin({maxChunks: 15})
-        // //Limit the minimum chunk size with --optimize-min-chunk-size 10000 
+        // //Limit the minimum chunk size with --optimize-min-chunk-size 10000
         //new webpack.optimize.MinChunkSizePlugin({minChunkSize: 10000})
     ]
 };

@@ -4,12 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "webpack  --config ./webpack.prod.config.js  --progress --profile --json > app.state.json --bail --display-modules --display-reasons",
-    "dev": "webpack-dev-server  --config ./webpack.dev.config.js  --colors --open --hot",
+    "build": "webpack  --config ./webpack/webpack.prod.config.js  --progress --profile --json > app.state.json --bail --display-modules --display-reasons",
+    "dev": "webpack-dev-server  --config ./webpack/webpack.dev.config.js  --colors --open --hot",
     "test": "karma start karma.conf",
     "test-watch": "karma start --auto-watch --no-single-run"
   },
-  "author": "",
+  "author": "Mohamed Hamed <mohamed.hamed1@vodafone.com>",
   "license": "ISC",
   "dependencies": {
     "jquery": "^3.2.1",
@@ -65,5 +65,6 @@
     "url-loader": "^0.5.9",
     "webpack": "^3.4.1",
     "webpack-dev-server": "^2.6.1"
-  }
+  },
+  "repository": "https://github.com/MohamedHamed83/fitness-app.git"
 }

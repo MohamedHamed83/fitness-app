@@ -1,0 +1,15 @@
+{
+  "javascript": {
+    "main": "http://localhost:3000/main.8a9610b7b9de2c66007b.bundle.js",
+    "vendor": "http://localhost:3000/vendor.c0ba08a6f1616efb495b.bundle.js"
+  },
+  "styles": {},
+  "assets": {
+    "./src/style.scss": {
+      "_style": "div {\n  background-color: #000000;\n  color: #ffffff;\n  background-position: 100%;\n  background-repeat: no-repeat;\n}\n"
+    }
+  },
+  "webpack": {
+    "version": "3.5.1"
+  }
+}

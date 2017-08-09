@@ -99,7 +99,7 @@ module.exports = {
         new ProgressPlugin(),
         new HtmlWebpackPlugin({
             path: './build',
-            template: './index.html',
+            template: '../index.html',
             minify: {
                 removeComments: true,
                 collapseWhitespace: true

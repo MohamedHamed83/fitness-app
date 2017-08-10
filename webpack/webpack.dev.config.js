@@ -239,7 +239,7 @@ module.exports = {
     }),
     //creation of HTML files to serve the webpack bundles
     new HtmlWebpackPlugin({
-      path: './build',
+      path: '../build',
       template: './index.html',
       minify: {
         removeComments: true,

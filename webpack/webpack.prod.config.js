@@ -27,12 +27,12 @@ module.exports = {
   },
   //where the bundle files will go
   output: {
-    path: resolve(__dirname, './build'),// Path of output file
+    path: resolve(__dirname, '../build'),// Path of output file
     publicPath: './',// the bundle file's
     filename: 'js/[name].[hash].js',
     chunkFilename: 'js/[name].[hash].js',
     //tilling webpacl dev server where to serve bundle files from
-    publicPath: '/build/'
+    publicPath: '../build/'
   },
   resolve: {
     extensions: ['.js'],
@@ -62,7 +62,7 @@ module.exports = {
     },
     historyApiFallback: true,
     // //where the files will come from
-    contentBase: join(__dirname, 'build'),
+    contentBase: resolve(__dirname, '../build'),
   },
   module: {
     rules: [
@@ -158,7 +158,7 @@ module.exports = {
     new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.optimize.ModuleConcatenationPlugin(),
     // //deleting the build folder before a fresh build
-    new CleanWebpackPlugin(['build']),
+    new CleanWebpackPlugin(['build'], { root: resolve(__dirname , '..'), verbose: true }),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.LoaderOptionsPlugin({
       minimize: true,

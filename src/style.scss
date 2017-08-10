@@ -1,3 +1,7 @@
+@import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap/variables";
+$icon-font-path: '~bootstrap-sass/assets/fonts/bootstrap/';
+@import "~bootstrap-sass/assets/stylesheets/bootstrap";
+
 $black: #000000;
 $white: #ffffff;
 div {

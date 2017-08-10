@@ -10,6 +10,9 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const localPath = 'http://localhost:3000/';
 const IsomorphicPlugin = require('webpack-isomorphic-tools/plugin');
 const isomorphicToolsConfig = require('./isomorphic-tools-configuration');
+const mqpacker = require('css-mqpacker');
+const precss = require('precss');
+var autoprefixer = require('autoprefixer');
 const webpackIsomorphicToolsPlugin = new IsomorphicPlugin(
   isomorphicToolsConfig
 );
@@ -22,10 +25,17 @@ module.exports = {
   entry: {
     // only- means to only hot reload for successful updates
     main: [
-      'babel-polyfill',
-      'react-hot-loader/patch',
+            // bundle the client for webpack-dev-server
+      // and connect to the provided endpoint
+      //'webpack-dev-server/client?http://localhost:3000',
+      // bundle the client for hot reloading
+      // only- means to only hot reload for successful updates
       'webpack/hot/only-dev-server',
-      './src/app.js'
+      // activate HMR for React
+      'react-hot-loader/patch',
+      'babel-polyfill',
+      './src/app.js',
+      './src/style.scss'
     ],
     vendor: ['react', 'react-dom']
 
@@ -35,7 +45,7 @@ module.exports = {
     // the build folder
     path: resolve('build'),
     //tilling webpack dev server where to serve bundle files from "will be injected in the html"
-    publicPath: localPath,
+    publicPath: '/',
     // the bundle file's inclunding hash for long term caching "name of the entry files"
     filename: '[name].[chunkhash].bundle.js',
     //the name of non-entry chunk files
@@ -49,26 +59,9 @@ module.exports = {
   //cheap-module-source-map: original code not the transpiled  "source map smaller and correct file name and line number provided"
   //eval-source-map:
   // source-map: produces separate source map file
-  devtool: 'cheap-module-source-map',
+  devtool: 'cheap-module-eval-source-map',
   // webpack dev server configration
   devServer: {
-    // //We want to proxy all urls that start with /api to http://jsonplaceholder.typicode.com/,
-    // // but remove /api from the url.
-    // //So http://localhost:8080/api/users should do a request to http://jsonplaceholder.typicode.com/users.
-    // proxy: {
-    // 	'/api': {
-    // 		target: 'http://jsonplaceholder.typicode.com/',
-    // 		changeOrigin: true,
-    // 		pathRewrite: {
-    // 			'^/api': ''
-    // 		},
-    // 		bypass: function(req) {
-    // 			if(req.url === '/api/nope') {
-    // 				return '/bypass.html';
-    // 			}
-    // 		}
-    // 	}
-    // },
     stats: {
       cached: true,
       cachedAssets: true,
@@ -90,6 +83,24 @@ module.exports = {
     // on which port you are going to run the webpack-dev-server,
     port: 3000,
     host: 'localhost', // Change to '0.0.0.0' for external facing server
+
+    // //We want to proxy all urls that start with /api to http://jsonplaceholder.typicode.com/,
+    // // but remove /api from the url.
+    // //So http://localhost:8080/api/users should do a request to http://jsonplaceholder.typicode.com/users.
+    // proxy: {
+    // 	'/api': {
+    // 		target: 'http://jsonplaceholder.typicode.com/',
+    // 		changeOrigin: true,
+    // 		pathRewrite: {
+    // 			'^/api': ''
+    // 		},
+    // 		bypass: function(req) {
+    // 			if(req.url === '/api/nope') {
+    // 				return '/bypass.html';
+    // 			}
+    // 		}
+    // 	}
+    // },
   },
   stats: {
     colors: true,
@@ -103,93 +114,101 @@ module.exports = {
     entrypoints: true
   },
   module: {
-    rules: [{
-      test: /\.js$/,
-      exclude: /node_modules/,
-      loaders: [{
-        loader: 'babel-loader',
-        options: {
-          babelrc: false,
-          plugins: [
-            'react-hot-loader/babel',
-            'transform-runtime',
-            // 'add-module-exports',
-            'transform-react-display-name',
-            'typecheck',
-            'syntax-dynamic-import'
-          ],
-          presets: [['es2015', { modules: false }], 'stage-2', 'react'],
-          cacheDirectory: true
-        }
-      }]
-    },
-    {
-      test: /\.scss$/,
-      loaders: [
-        {
-          loader: 'style-loader'
-        },
-        {
-          loader: 'css-loader',
+    rules: [
+      {
+        enforce: "pre",
+        test: /\.js$/,
+        exclude: /node_modules/,
+        loader: "eslint-loader"
+      }, {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        loaders: [{
+          loader: 'babel-loader',
           options: {
-            modules: true,
-            importLoaders: 2,
-            sourceMap: true,
-            localIdentName: '[path][name]__[local]--[hash:base64:5]'
+            babelrc: false,
+            plugins: [
+              'react-hot-loader/babel',
+              'transform-runtime',
+              // 'add-module-exports',
+              'transform-react-display-name',
+              'typecheck',
+              'syntax-dynamic-import'
+            ],
+            presets: [['es2015', { modules: false }], 'stage-2', 'react'],
+            cacheDirectory: true
           }
-        },
+        }]
+      },
+      {
+        test: /\.scss$/,
+        exclude: /node_modules/,
+        loaders: [{ loader: 'style-loader' },
+        { loader: 'css-loader' },
         {
           loader: 'postcss-loader',
           options: {
-            plugins() {
-              return [
-                require('precss'), // eslint-disable-line
-                require('autoprefixer') // eslint-disable-line
-              ];
-            }
-          }
+            postcss: [
+              precss(),
+              autoprefixer({
+                browsers: ['last 2 versions', 'iOS 7', 'ios 6', '> 5%', 'IE <= 9', 'safari <= 7', 'opera <= 20', 'android 4'],
+              }),
+              mqpacker(),
+            ],
+          },
         },
-        { loader: 'sass-loader?outputStyle=expanded&sourceMap' }
-
-
-      ]
-    },
-    {
-      test: /\.(png|jpg|gif)$/,
-      loader: 'url-loader',
-      options: {
-        limit: 8192,
-        name: 'images/[name].[ext]'
+        { loader: 'sass-loader' }
+        ],
+      },
+      {
+        test: /\.css$/,
+        loaders: [{ loader: 'style-loader' },
+        { loader: 'css-loader' },
+        {
+          loader: 'postcss-loader',
+          options: {
+            postcss: [
+              precss(),
+              autoprefixer({
+                browsers: ['last 2 versions', 'iOS 7', 'ios 6', '> 5%', 'IE <= 9', 'safari <= 7', 'opera <= 20', 'android 4'],
+              }),
+              mqpacker(),
+            ],
+          },
+        },
+        { loader: 'sass-loader' }
+        ],
+      },
+      {
+        test: /\.(png|jpg|gif)$/,
+        loader: 'url-loader',
+        options: {
+          limit: 8192,
+          name: 'images/[name].[ext]'
+        }
+      },
+      {
+        test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
+        loader: 'url-loader?name=fonts/[name].[ext]&limit=10000&mimetype=application/font-woff'
+      },
+      {
+        test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/, loader: 'url-loader?name=fonts/[name].[ext]&limit=10000&mimetype=application/font-woff'
+      },
+      {
+        test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: 'url-loader?name=fonts/[name].[ext]&limit=10000&mimetype=application/octet-stream'
+      },
+      {
+        test: /\.otf(\?v=\d+\.\d+\.\d+)?$/, loader: 'url-loader?name=fonts/[name].[ext]&limit=10000&mimetype=application/octet-stream'
+      },
+      {
+        test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loader: 'file-loader?name=fonts/[name].[ext]'
+      },
+      {
+        test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: 'url-loader?name=images/[name].[ext]&limit=10000&mimetype=image/svg+xml'
+      },
+      {
+        test: webpackIsomorphicToolsPlugin.regular_expression('images'), loader: 'url-loader?name=images/[name].[ext]&limit=10240'
       }
-    },
-    {
-      test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
-      loader: 'url-loader?name=fonts/[name].[ext]&limit=10000&mimetype=application/font-woff'
-    },
-    {
-      test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/,
-      loader: 'url-loader?name=fonts/[name].[ext]&limit=10000&mimetype=application/font-woff'
-    },
-    {
-      test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
-      loader: 'url-loader?name=fonts/[name].[ext]&limit=10000&mimetype=application/octet-stream'
-    },
-    {
-      test: /\.otf(\?v=\d+\.\d+\.\d+)?$/,
-      loader: 'url-loader?name=fonts/[name].[ext]&limit=10000&mimetype=application/octet-stream'
-    },
-    {
-      test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
-      loader: 'file-loader?name=fonts/[name].[ext]'
-    },
-    {
-      test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-      loader: 'url-loader?name=images/[name].[ext]&limit=10000&mimetype=image/svg+xml'
-    },
-    {
-      test: webpackIsomorphicToolsPlugin.regular_expression('images'),
-      loader: 'url-loader?name=images/[name].[ext]&limit=10240'
-    }
     ]
   },
   plugins: [
@@ -204,7 +223,15 @@ module.exports = {
       filename: 'css/[name].css',
       allChunks: true
     }),
-
+    new webpack.LoaderOptionsPlugin({
+      test: /\.js$/,
+      options: {
+        eslint: {
+          configFile: resolve(__dirname, '../.eslintrc'),
+          cache: false,
+        }
+      },
+    }),
     //exclude all the common code from modules and bundle them in on file
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
